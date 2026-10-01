@@ -1,5 +1,6 @@
 import type { BrandDocument } from '../models/brandMirrorModels'
 import { clampTokenValues, validateTokens } from '../domain/brandRules'
+import { normalizeSemanticTokens } from '../domain/semanticTokens'
 import type { StorageService } from '../services/storageService'
 
 export interface BrandRepository {
@@ -16,7 +17,16 @@ export class LocalBrandRepository implements BrandRepository {
     try {
       const candidate: unknown = JSON.parse(raw)
       if (!isDocument(candidate)) return null
-      return { ...candidate, tokens: clampTokenValues(candidate.tokens) }
+      return {
+        ...candidate,
+        tokens: clampTokenValues(candidate.tokens),
+        semanticTokens: normalizeSemanticTokens(candidate.semanticTokens),
+        versions: candidate.versions.map((version) => ({
+          ...version,
+          tokens: clampTokenValues(version.tokens),
+          semanticTokens: normalizeSemanticTokens(version.semanticTokens),
+        })),
+      }
     } catch {
       return null
     }
@@ -32,5 +42,6 @@ export class LocalBrandRepository implements BrandRepository {
 function isDocument(value: unknown): value is BrandDocument {
   if (!value || typeof value !== 'object') return false
   const candidate = value as Partial<BrandDocument>
-  return candidate.version === 1 && !!candidate.tokens && Array.isArray(candidate.versions) && typeof candidate.theme === 'string'
+  if (candidate.version !== 1 || !candidate.tokens || !Array.isArray(candidate.versions) || typeof candidate.theme !== 'string') return false
+  return candidate.versions.every((version) => !!version.tokens)
 }

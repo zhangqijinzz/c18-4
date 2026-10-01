@@ -1,10 +1,13 @@
-import type { BrandMirrorSnapshot, BrandTheme } from '../models/brandMirrorModels'
+import type { BrandMirrorSnapshot, BrandTheme, SemanticRole } from '../models/brandMirrorModels'
+import { SemanticTokenPanel } from './SemanticTokenPanel'
 
 interface TokenControlsProps {
   snapshot: BrandMirrorSnapshot
   onThemeChange: (theme: BrandTheme) => void
   onColorChange: (field: 'primary' | 'secondary', value: string) => void
   onScaleChange: (field: 'radiusScale' | 'spacingScale' | 'typeScale', index: number, value: number) => void
+  onSemanticChange: (role: SemanticRole, reference: string) => void
+  onSemanticReset: () => void
   onReset: () => void
 }
 
@@ -14,7 +17,7 @@ const themes: { id: BrandTheme; label: string; note: string }[] = [
   { id: 'night', label: 'Night signal', note: '锐利 · 数字' },
 ]
 
-export function TokenControls({ snapshot, onThemeChange, onColorChange, onScaleChange, onReset }: TokenControlsProps) {
+export function TokenControls({ snapshot, onThemeChange, onColorChange, onScaleChange, onSemanticChange, onSemanticReset, onReset }: TokenControlsProps) {
   return (
     <aside className="control-panel">
       <div className="panel-heading">
@@ -53,6 +56,8 @@ export function TokenControls({ snapshot, onThemeChange, onColorChange, onScaleC
       <ScaleControl label="圆角尺度" hint="px" values={snapshot.tokens.radiusScale} field="radiusScale" onChange={onScaleChange} />
       <ScaleControl label="间距体系" hint="px" values={snapshot.tokens.spacingScale} field="spacingScale" onChange={onScaleChange} />
       <ScaleControl label="字体比例" hint="px" values={snapshot.tokens.typeScale} field="typeScale" onChange={onScaleChange} />
+
+      <SemanticTokenPanel snapshot={snapshot} onChange={onSemanticChange} onReset={onSemanticReset} />
 
       <div className="panel-footer"><span className="live-dot" />所有调整实时同步到预览</div>
     </aside>

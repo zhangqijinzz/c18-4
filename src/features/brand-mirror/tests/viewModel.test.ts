@@ -52,12 +52,58 @@ describe('BrandMirrorViewModel', () => {
 
   it('recovers a previously persisted document on initialization', () => {
     const repository = new MemoryRepository()
-    repository.document = { version: 1, theme: 'night', tokens: { primary: '#A98BFF', secondary: '#191829', radiusScale: [6, 10, 14, 22], spacingScale: [4, 8, 12, 18, 28], typeScale: [12, 14, 16, 20, 28, 38] }, versions: [] }
+    repository.document = { version: 1, theme: 'night', tokens: { primary: '#A98BFF', secondary: '#191829', radiusScale: [6, 10, 14, 22], spacingScale: [4, 8, 12, 18, 28], typeScale: [12, 14, 16, 20, 28, 38] }, semanticTokens: { background: 'black', surface: 'black', text: 'color.primary', accent: 'color.primary', radius: 'radius.1', fontSize: 'type.2' }, versions: [] }
     const viewModel = new BrandMirrorViewModel(repository)
     viewModel.initialize()
     expect(viewModel.getSnapshot().theme).toBe('night')
+    expect(viewModel.getSnapshot().resolved.background).toBe('#000000')
+    expect(viewModel.getSnapshot().resolved.accent).toBe('#A98BFF')
     expect(viewModel.getSnapshot().message).toContain('恢复')
   })
+
+  it('updates semantic references and exposes resolved values with fallback on broken refs', () => {
+    const repository = new MemoryRepository()
+    const viewModel = new BrandMirrorViewModel(repository)
+    viewModel.initialize()
+    viewModel.updateSemanticToken('accent', 'color.secondary')
+    expect(viewModel.getSnapshot().resolved.accent).toBe('#24324A')
+    expect(repository.document?.semanticTokens.accent).toBe('color.secondary')
+
+    viewModel.updateSemanticToken('background', 'semantic.surface')
+    viewModel.updateSemanticToken('surface', 'semantic.background')
+    const snapshot = viewModel.getSnapshot()
+    expect(snapshot.semanticIssues.filter((issue) => issue.kind === 'cycle').length).toBeGreaterThan(0)
+    expect(snapshot.message).toContain('成环')
+    expect(snapshot.resolved.background).toBe('#FFFFFF')
+  })
+
+  it('persists semantic tokens inside saved versions and restores them', () => {
+    const repository = new MemoryRepository()
+    const viewModel = new BrandMirrorViewModel(repository)
+    viewModel.initialize()
+    viewModel.updateSemanticToken('accent', 'black')
+    viewModel.saveVersion()
+    expect(repository.document?.versions[0].semanticTokens.accent).toBe('black')
+    const restored = new BrandMirrorViewModel(repository)
+    restored.initialize()
+    expect(restored.getSnapshot().resolved.accent).toBe('#000000')
+  })
+
+  it('exports resolved semantic values and warns about broken references', () => {
+    const repository = new MemoryRepository()
+    const exporter = new MemoryExporter()
+    const viewModel = new BrandMirrorViewModel(repository, exporter)
+    viewModel.initialize()
+    viewModel.updateSemanticToken('surface', 'semantic.text')
+    viewModel.exportBrandGuidelines()
+    expect(exporter.received).toContain('## 语义令牌')
+    expect(exporter.received).toContain('#F15A47')
+    viewModel.updateSemanticToken('text', 'color.nope')
+    viewModel.exportBrandGuidelines()
+    expect(exporter.received).toContain('引用无效')
+    expect(exporter.received).toContain('兜底')
+  })
+
 
   it('exports the current token system as brand guidelines', () => {
     const repository = new MemoryRepository()
@@ -66,7 +112,7 @@ describe('BrandMirrorViewModel', () => {
     viewModel.initialize()
     viewModel.exportBrandGuidelines()
     expect(exporter.received).toContain('# BrandMirror 品牌规范')
-    expect(exporter.received).toContain('`primary`')
+    expect(exporter.received).toContain('`color.primary`')
     expect(viewModel.getSnapshot().message).toContain('导出')
   })
 })
