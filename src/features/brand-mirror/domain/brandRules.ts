@@ -53,3 +53,11 @@ export function contrastRatio(first: string, second: string): number {
 export function themeTokens(theme: BrandTheme): BrandTokens {
   return cloneTokens(THEME_PRESETS[theme].tokens)
 }
+
+export function themeSemanticTokens(theme: BrandTheme) {
+  return { ...THEME_PRESETS[theme].semanticTokens }
+}
+
+export function readableTextColor(color: string): string {
+  return luminance(color) > 0.42 ? '#20252C' : '#FFFFFF'
+}

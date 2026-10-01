@@ -90,7 +90,26 @@ h1 em { color: #f15a47; font-style: normal; }
 .sample { min-height: 94px; padding-top: 15px; display: flex; flex-wrap: wrap; align-content: center; gap: 8px; }
 .sample button { padding: 8px 11px; border: 0; color: white; font-size: 9px; font-weight: 700; }
 .sample button span { margin-left: 7px; }
-.ghost-button { color: #78818e !important; background: #f1f2f4 !important; }
+.ghost-button { border: 1px solid #e7e9ec; }
+.semantic-section .section-label { align-items: flex-start; }
+.semantic-role-list { display: grid; gap: 8px; }
+.semantic-role { padding: 8px; background: #fff; border: 1px solid #e5e8ec; border-radius: 8px; display: grid; grid-template-columns: 1fr; gap: 7px; }
+.semantic-role.invalid { border-color: #f1b0a8; background: #fff7f5; }
+.semantic-role-info { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.semantic-swatch { width: 21px; height: 21px; flex: 0 0 auto; border-radius: 6px; box-shadow: inset 0 0 0 1px #00000014; }
+.semantic-role-info strong, .semantic-role-info small { display: block; }
+.semantic-role-info strong { color: #5c6572; font-size: 10px; font-weight: 700; }
+.semantic-role-info small { margin-top: 2px; color: #a4abb5; font-size: 8px; }
+.semantic-value-control { display: grid; gap: 4px; }
+.semantic-value-control code { width: 100%; padding: 3px 5px; color: #24324a; background: #f3f5f7; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 8px; }
+.semantic-value-control input { width: 100%; padding: 6px 7px; color: #53606e; background: #fff; border: 1px solid #e1e4e8; border-radius: 5px; outline: 0; font-family: 'DM Mono', monospace; font-size: 8px; }
+.semantic-value-control input:focus { border-color: #f15a47; box-shadow: 0 0 0 3px #f15a4717; }
+.semantic-error { color: #c84f3f; font-size: 8px; line-height: 1.4; }
+.semantic-issue-banner { margin: 0 0 24px; padding: 13px 15px; color: #9e4638; background: #fff2ef; border: 1px solid #f3c7bf; border-radius: 10px; }
+.semantic-issue-banner strong { display: block; margin-bottom: 7px; font-size: 11px; }
+.semantic-issue-banner ul { margin: 0; padding-left: 15px; display: grid; gap: 4px; }
+.semantic-issue-banner li { font-size: 10px; line-height: 1.4; }
+.semantic-issue-banner li span { display: inline-block; min-width: 42px; font-weight: 700; }
 .fake-input { width: 100%; padding: 9px 10px; color: #a3a9b3; border: 1px solid #e7e9ec; font-size: 9px; display: flex; justify-content: space-between; }
 .fake-input span { color: #bbc0c8; font-size: 13px; }
 .tag-row { display: flex; gap: 5px; }
@@ -171,7 +190,7 @@ h1 em { color: #f15a47; font-style: normal; }
 .version-preview { height: 96px; margin-top: 12px; padding: 13px; overflow: hidden; }
 .version-preview-top { width: 34%; height: 8px; border-radius: 4px; }
 .version-preview-copy { margin-top: 12px; display: grid; gap: 5px; }
-.version-preview-copy i { width: 65%; height: 4px; background: #ffffff45; border-radius: 3px; }
+.version-preview-copy i { width: 65%; height: 4px; background: currentColor; border-radius: 3px; }
 .version-preview-copy i:nth-child(2) { width: 48%; }
 .version-preview-copy i:nth-child(3) { width: 30%; }
 .version-preview-button { width: 33px; height: 11px; margin-top: 11px; display: block; }
